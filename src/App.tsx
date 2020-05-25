@@ -1,26 +1,49 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react'
+import { connect } from 'react-redux';
+import * as TodoItemActions from './store/actions'
+import { RootState } from './store';
+import { ThunkDispatch } from 'redux-thunk';
+import { AnyAction, Dispatch, bindActionCreators } from 'redux';
+import { GotTodoItems } from './store/types';
+import { TodoItem } from './models/TodoItem';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+export interface IAppProps {
+  todos: TodoItem[];
+  loading: boolean;
 }
 
-export default App;
+type Props = IAppProps & DispatchProps;
+
+export class App extends React.Component<Props> {
+  public render() {
+    let { getTodoItems } = this.props;
+    let idk = getTodoItems();
+    console.log(idk);
+    return (
+      <div>
+
+      </div>
+    );
+  }
+}
+
+
+const mapStateToProps = (state: RootState) => {
+  console.log(state);
+  return {
+    todos: state.todoReducer.todoItems,
+    loading: state.todoReducer.loading
+  };
+}
+
+const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators(TodoItemActions, dispatch);
+
+interface DispatchProps {
+  getTodoItems: () => TodoItem[];
+}
+
+export default connect(
+  mapStateToProps, //bring in the mapStateToProps function to inform redux of what you want to bring in and how to bring it in (to props)
+  mapDispatchToProps
+  //bring in specific actions into this component
+)(App);
